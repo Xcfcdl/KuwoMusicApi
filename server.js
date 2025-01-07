@@ -4,7 +4,14 @@ import handleGetMusicUrl from './kw/url.js';
 import handleMusicSearch from './kw/search.js';
 
 const app = express();
-const port = 3005;
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
+const port = process.env.PORT || 3005;
 
 app.use(express.json());
 
@@ -48,8 +55,8 @@ app.get('/precise-get', async (req, res) => {
     console.log(input);
     */
     let ndiffer = lodash.uniq(lodash.difference(sear.name.split(''), input.name.split('')).concat(lodash.difference(input.name.split(''), sear.name.split(''))))
-    let nadiffer_res = ndiffer.length / ((sear.name.length + input.name.length) / 2) > 0.1
-    if (!sear.name.startsWith(input.name) && !nadiffer_res) continue;
+    let nadiffer_res = ndiffer.length / ((sear.name.length + input.name.length) / 2) <= 0.1
+    if (!sear.name.startsWith(input.name) && nadiffer_res) continue;
     console.log('name pass')
 
     const searArtistList = sear.artist.split("&");
@@ -94,7 +101,7 @@ app.get('/precise-get', async (req, res) => {
 
 app.get('/first-geturl', async (req, res) => {
   const searchResult = await handleMusicSearch(req.query.keyword)
-  if (searchResult.data === []) {
+  if (!searchResult.data || searchResult.data.length === 0) {
     res.status(400).json({ msg: '搜索结果为空或出错', data: null });
     return;
   }

@@ -4,9 +4,13 @@
   "description": "",
   "type": "module",
   "main": "server.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"错误：没有指定测试\" && exit 1"
+    "dev": "node server.js",
+    "vercel-build": "echo hello"
   },
   "keywords": [],
   "author": "是青旨啊Sayqz.com",
